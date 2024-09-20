@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片展示页面</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+        #image-container {
+            position: relative;
+            display: inline-block;
+        }
+        img {
+            max-width: 100%;
+            max-height: 100vh;
+            object-fit: contain;
+        }
+        #clock {
+            position: absolute;
+            font-family: Times New Roman, serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="image-container">
+        <img src="https://s2.loli.net/2024/09/20/EsezSRJAXC5m9Pb.jpg" alt="微信图片" id="main-image">
+        <div id="clock"></div>
+    </div>
+
+    <script>
+        const clock = document.getElementById('clock');
+        const image = document.getElementById('main-image');
+        let clockFontSize = 16;
+        let clockPositionX = 5;
+        let clockPositionY = 5;
+
+        function updateClock() {
+            const now = new Date();
+            const beijingTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + 3600000 * 8);
+            const hours = beijingTime.getHours();
+            const minutes = beijingTime.getMinutes();
+            const seconds = beijingTime.getSeconds();
+
+            const timeString = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+            clock.textContent = timeString;
+        }
+
+        function padZero(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        function setClockSize(size) {
+            clockFontSize = size;
+            updateClockPosition();
+        }
+
+        function setClockPosition(x, y) {
+            clockPositionX = x;
+            clockPositionY = y;
+            updateClockPosition();
+        }
+
+        function updateClockPosition() {
+            const imageWidth = image.offsetWidth;
+            const imageHeight = image.offsetHeight;
+            const fontSize = (imageWidth / 100) * (clockFontSize / 16); // 根据图片大小调整字体大小
+            
+            clock.style.fontSize = `${fontSize}px`;
+            clock.style.left = `${(imageWidth * clockPositionX) / 100}px`;
+            clock.style.top = `${(imageHeight * clockPositionY) / 100}px`;
+        }
+
+        // 初始化时钟大小和位置
+        setClockSize(53);
+        setClockPosition(53.5, 88);
+
+        // 监听图片加载完成事件
+        image.onload = updateClockPosition;
+
+        // 监听窗口大小变化
+        window.addEventListener('resize', updateClockPosition);
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // 示例：如何调整时钟大小和位置
+        // setClockSize(24); // 将时钟大小设置为24（相对单位）
+        // setClockPosition(10, 15); // 将时钟位置设置为距左10%，距上15%
+    </script>
+</body>
+</html>
